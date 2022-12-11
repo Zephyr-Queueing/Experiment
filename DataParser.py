@@ -117,15 +117,15 @@ def plotE2ELatency(dm, exp):
 
 if True:
     print("Plot queue size:")
-    # plotQueueSize("standard", "n1t1")
+    plotQueueSize("standard", "n1t1")
     # plotQueueSize("standard", "n3t4")
-    plotQueueSize("zephyr", "n1t1")
+    # plotQueueSize("zephyr", "n1t1")
     # plotQueueSize("zephyr", "n3t4")
     
     print("Plot weights:")
-    # plotWeights("standard", "n1t1")
+    plotWeights("standard", "n1t1")
     # plotWeights("standard", "n3t4")
-    plotWeights("zephyr", "n1t1")
+    # plotWeights("zephyr", "n1t1")
     # plotWeights("zephyr", "n3t4")
 
     print("Plot end-to-end latency:")
