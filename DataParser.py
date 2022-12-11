@@ -129,7 +129,7 @@ if True:
     # plotWeights("zephyr", "n3t4")
 
     print("Plot end-to-end latency:")
-    # plotE2ELatency("standard", "n1t1")
+    plotE2ELatency("standard", "n1t1")
     # plotE2ELatency("standard", "n3t4")
-    plotE2ELatency("zephyr", "n1t1")
+    # plotE2ELatency("zephyr", "n1t1")
     # plotE2ELatency("zephyr", "n3t4")
