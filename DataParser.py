@@ -13,13 +13,13 @@ def plotQueueSize(dm, exp):
         data = file[line].split(',')
         if line == 0:
             time_0 = int(data[0])
-        time.append(int(data[0]) - time_0)
+        time.append((int(data[0]) - time_0) / 1000)
         q1.append(int(data[1]))
         q2.append(int(data[2]))
         q3.append(int(data[3]))
-    plt.plot(time, q1, label="Q1 Size")
-    plt.plot(time, q2, label="Q2 Size")
-    plt.plot(time, q3, label="Q3 Size")
+    plt.plot(time, q1, label="Priority 1")
+    plt.plot(time, q2, label="Priority 2")
+    plt.plot(time, q3, label="Priority 3")
     plt.xlim(0, np.max(time))
     sizeMax = [np.max(q1), np.max(q2), np.max(q3)]
     plt.ylim(0, np.max(sizeMax))
@@ -30,12 +30,12 @@ def plotQueueSize(dm, exp):
         title_n += "s"
     if t != 1:
         title_t += "s"
-    plt.title("Time vs Queue Size with " + 
-              str(n) + " " + title_n + " " + 
+    plt.title("Size over Time w/ " + 
+              dm + " " + str(n) + " " + title_n + " " + 
               str(t) + " " + title_t)
-    plt.xlabel("Time (ms)")
+    plt.xlabel("Time (s)")
     plt.ylabel("Size")
-    plt.savefig("plots/QueueSize_" + exp + ".png")
+    plt.savefig("plots/QueueSize_" + dm + "_" + exp + ".png")
     plt.cla()
     plt.clf()
 
@@ -51,13 +51,13 @@ def plotWeights(dm, exp):
         data = file[line].split(',')
         if line == 0:
             time_0 = int(data[0])
-        time.append(int(data[0]) - time_0)
+        time.append((int(data[0]) - time_0) / 1000)
         w1.append(float(data[4]))
         w2.append(float(data[5]))
         w3.append(float(data[6]))
-    plt.plot(time, w1, label="Weight 1 Size")
-    plt.plot(time, w2, label="Weight 2 Size")
-    plt.plot(time, w3, label="Weight 3 Size")
+    plt.plot(time, w1, label="Priority 1")
+    plt.plot(time, w2, label="Priority 2")
+    plt.plot(time, w3, label="Priority 3")
     plt.xlim(0, np.max(time))
     plt.ylim(0, 1)
     plt.legend()
@@ -67,12 +67,12 @@ def plotWeights(dm, exp):
         title_n += "s"
     if t != 1:
         title_t += "s"
-    plt.title("Time vs Weights with " + 
-              str(n) + " " + title_n + " " + 
+    plt.title("Weights over Time w/ " + 
+              dm + " " + str(n) + " " + title_n + " " + 
               str(t) + " " + title_t)
-    plt.xlabel("Time (ms)")
+    plt.xlabel("Time (s)")
     plt.ylabel("Weight")
-    plt.savefig("plots/Weight_" + exp + ".png")
+    plt.savefig("plots/Weight_" + dm + "_" + exp + ".png")
     plt.cla()
     plt.clf()
 
@@ -80,7 +80,7 @@ def plotE2ELatency(dm, exp):
     expDir = "data/" + dm + "/" + exp
     n=int(exp[exp.rindex('n')+1:exp.rindex('t')])
     t=int(exp[exp.rindex('t')+1:])
-    time, lat = [], []
+    t1, t2, t3, l1, l2, l3 = [], [], [], [], [], []
     for i in range(n):
         for j in range(t):
             name = expDir + "/n" + str(i) + "/log_T" + str(j) + ".log"
@@ -91,45 +91,55 @@ def plotE2ELatency(dm, exp):
                 data = file[line].split(',')
                 if line == 0:
                     time_0 = int(data[2])
-                    prev = time_0
-                if prev != int(data[2]):
-                    time.append((int(data[2]) - time_0))
-                    lat.append((int(data[2]) - int(data[3])))
-                prev = int(data[2])
-    plt.plot(time, lat)
-    plt.xlim(0, np.max(time))
-    plt.ylim(0, np.max(lat))
+                if int(data[1]) == 1:
+                    t1.append((int(data[2]) - time_0) / 1000)
+                    l1.append((int(data[2]) - int(data[3])) / 1000)
+                elif int(data[1]) == 2:
+                    t2.append((int(data[2]) - time_0) / 1000)
+                    l2.append((int(data[2]) - int(data[3])) / 1000)
+                elif int(data[1]) == 3:
+                    t3.append((int(data[2]) - time_0) / 1000)
+                    l3.append((int(data[2]) - int(data[3])) / 1000)
+    plt.plot(t1, l1, label="Priority 1")
+    plt.plot(t2, l2, label="Priority 2")
+    plt.plot(t3, l3, label="Priority 3")
+    plt.axhline(y=0.5, color='red', linestyle='dotted')
+    timeMax = [np.max(t1), np.max(t2), np.max(t3)]
+    plt.xlim(0, np.max(timeMax))
+    sizeMax = [np.max(l1), np.max(l2), np.max(l3)]
+    plt.ylim(0, np.max(sizeMax))
+    plt.legend()
     title_n = "Node"
     title_t = "Thread"
     if n != 1:
         title_n += "s"
     if t != 1:
         title_t += "s"
-    plt.title("Time vs End to End Queue Latency with " + 
-              str(n) + " " + title_n + " " + 
+    plt.title("End to End Latency over time w/ " + 
+              dm + " " + str(n) + " " + title_n + " " + 
               str(t) + " " + title_t)
-    plt.xlabel("Time (ms)")
-    plt.ylabel("Latency (ms)")
-    plt.savefig("plots/E2ELatency_" + exp + ".png")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Latency (s)")
+    plt.savefig("plots/E2ELatency_" + dm + "_" + exp + ".png")
     plt.cla()
     plt.clf()
 
 
 if True:
     print("Plot queue size:")
-    plotQueueSize("standard", "n1t1")
-    # plotQueueSize("standard", "n3t4")
-    # plotQueueSize("zephyr", "n1t1")
-    # plotQueueSize("zephyr", "n3t4")
+    plotQueueSize("Standard", "n1t1")
+    # plotQueueSize("Standard", "n3t4")
+    plotQueueSize("Zephyr", "n1t1")
+    # plotQueueSize("Zephyr", "n3t4")
     
     print("Plot weights:")
-    plotWeights("standard", "n1t1")
-    # plotWeights("standard", "n3t4")
-    # plotWeights("zephyr", "n1t1")
-    # plotWeights("zephyr", "n3t4")
+    plotWeights("Standard", "n1t1")
+    # plotWeights("Standard", "n3t4")
+    plotWeights("Zephyr", "n1t1")
+    # plotWeights("Zephyr", "n3t4")
 
     print("Plot end-to-end latency:")
-    plotE2ELatency("standard", "n1t1")
-    # plotE2ELatency("standard", "n3t4")
-    # plotE2ELatency("zephyr", "n1t1")
-    # plotE2ELatency("zephyr", "n3t4")
+    plotE2ELatency("Standard", "n1t1")
+    # plotE2ELatency("Standard", "n3t4")
+    plotE2ELatency("Zephyr", "n1t1")
+    # plotE2ELatency("Zephyr", "n3t4")
