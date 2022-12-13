@@ -100,10 +100,15 @@ def plotE2ELatency(dm, exp):
                 elif int(data[1]) == 3:
                     t3.append((int(data[2]) - time_0) / 1000)
                     l3.append((int(data[2]) - int(data[3])) / 1000)
-    plt.plot(t1, l1, label="Priority 1")
-    plt.plot(t2, l2, label="Priority 2")
-    plt.plot(t3, l3, label="Priority 3")
-    plt.axhline(y=0.5, color='red', linestyle='dotted')
+    if n == 1 and t == 1:
+        plt.plot(t1, l1, label="Priority 1")
+        plt.plot(t2, l2, label="Priority 2")
+        plt.plot(t3, l3, label="Priority 3")
+    else:
+        plt.scatter(t1, l1, label="Priority 1", s=2)
+        plt.scatter(t2, l2, label="Priority 2", s=2)
+        plt.scatter(t3, l3, label="Priority 3", s=2)
+    plt.axhline(y=10, color='red', linestyle='dotted')
     timeMax = [np.max(t1), np.max(t2), np.max(t3)]
     plt.xlim(0, np.max(timeMax))
     sizeMax = [np.max(l1), np.max(l2), np.max(l3)]
